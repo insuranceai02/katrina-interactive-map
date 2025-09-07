@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hurricane Katrina - Interactive Map Visualization</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* 标题区域 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.0em;
+            line-height: 1.3;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: left;
+            padding: 0 30px;
+        }
+
+        .header p a {
+            color: #3498db;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .header p a:hover {
+            text-decoration: underline;
+        }
+
+        /* 选项卡容器 */
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 选项卡按钮 */
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            color: #7f8c8d;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 0;
+        }
+
+        .tab-button:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .tab-button.active {
+            background-color: #3498db;
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        /* 图片容器 */
+        .image-container {
+            text-align: center;
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-image {
+            max-width: 100%;
+            max-height: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        .map-image.hidden {
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header p {
+                font-size: 0.95em;
+                padding: 0 15px;
+                line-height: 1.2;
+                max-width: 100%;
+            }
+
+            .tab-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .tab-button {
+                padding: 12px 15px;
+                font-size: 0.9em;
+            }
+
+            .image-container {
+                min-height: 400px;
+                padding: 15px;
+            }
+
+            .map-image {
+                max-height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+                padding: 0 10px;
+                line-height: 1.1;
+                max-width: 100%;
+            }
+
+            .tab-button {
+                padding: 10px 12px;
+                font-size: 0.85em;
+            }
+
+            .image-container {
+                min-height: 300px;
+                padding: 10px;
+            }
+
+            .map-image {
+                max-height: 300px;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题区域 -->
+        <div class="header">
+            <h1>Hurricane Katrina 20th Anniversary</h1>
+            <p>Hurricane Katrina struck near Buras, Louisiana on August 29, 2005, as a Category 3 storm with sustained winds of about 127 mph. The combination of strong winds plus tide caused flooding along a 20‑mile stretch of the Mississippi coast near Bay St. Louis.<br><br>
+            This interactive map visualization tool displays the floodwater depth and inundation extent caused by Hurricane Katrina.<br><br>
+            📍 For Storm Tide Animation, click: <a href="https://www.linkedin.com/posts/boyuinsurance_katrina-20th-anniversary-ii-storm-activity-7369331080576790532-IQAP?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAboNaABec_nfb_A9PMs4owKnqyBMLUFE-0" target="_blank" style="color: #3498db; text-decoration: none;">🌀 Katrina 20th Anniversary II — Storm Tide Animation (Street View) 🛣️</a><br><br>
+            📍 I welcome all insights and discussions on CAT risk analytics, portfolio optimization, data visualization, underwriting strategies, and easy pricing!</p>
+        </div>
+
+        <!-- 选项卡导航 -->
+        <div class="tab-container">
+            <button class="tab-button" data-tab="base">Base Map</button>
+            <button class="tab-button" data-tab="elevation">Ground Elevation</button>
+            <button class="tab-button" data-tab="surge">Storm Tide</button>
+            <button class="tab-button active" data-tab="water">Water Depth</button>
+        </div>
+
+        <!-- 图片显示区域 -->
+        <div class="image-container">
+            <img src="Katrina20_Base.png" alt="Base Map" class="map-image hidden" id="base-map">
+            <img src="Katrina20_DEM.png" alt="Ground Elevation" class="map-image hidden" id="elevation-map">
+            <img src="Katrina20_Surge.png" alt="Storm Tide" class="map-image hidden" id="surge-map">
+            <img src="Katrina20_Waterdep.png" alt="Water Depth" class="map-image" id="water-map">
+        </div>
+    </div>
+
+    <script>
+        // 获取所有选项卡按钮和图片
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const mapImages = document.querySelectorAll('.map-image');
+
+        // 为每个选项卡按钮添加点击事件
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有活动状态
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                mapImages.forEach(img => img.classList.add('hidden'));
+
+                // 添加当前按钮的活动状态
+                button.classList.add('active');
+
+                // 显示对应的图片
+                const tabName = button.getAttribute('data-tab');
+                const targetImage = document.getElementById(tabName + '-map');
+                if (targetImage) {
+                    targetImage.classList.remove('hidden');
+                }
+            });
+        });
+
+        // 图片加载错误处理
+        mapImages.forEach(img => {
+            img.addEventListener('error', function() {
+                this.style.display = 'none';
+                const container = this.parentElement;
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = `
+                    <div style="color: #e74c3c; font-size: 1.2em; margin: 20px;">
+                        <p>图片加载失败</p>
+                        <p style="font-size: 0.9em; color: #7f8c8d;">请检查图片文件是否存在</p>
+                    </div>
+                `;
+                container.appendChild(errorDiv);
+            });
+        });
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Hurricane Katrina Interactive Map loaded successfully');
+        });
+    </script>
+</body>
+</html>
